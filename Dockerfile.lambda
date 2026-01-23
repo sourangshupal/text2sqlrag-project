@@ -62,6 +62,17 @@ RUN chmod -R 755 ${LAMBDA_TASK_ROOT}/app && \
 # ============================================================================
 FROM public.ecr.aws/lambda/python:3.12
 
+# Install runtime dependencies for PDF processing
+# - poppler-utils: PDF parsing (pdftotext, pdfinfo, etc.)
+# - libxcb, libX11, libXext, libXrender: X11 libraries needed by poppler
+RUN dnf install -y \
+    poppler-utils \
+    libxcb \
+    libX11 \
+    libXext \
+    libXrender \
+    && dnf clean all
+
 # Copy everything from builder stage (permissions already fixed)
 COPY --from=builder ${LAMBDA_TASK_ROOT} ${LAMBDA_TASK_ROOT}
 
